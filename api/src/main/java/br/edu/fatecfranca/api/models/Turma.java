@@ -1,9 +1,19 @@
 package br.edu.fatecfranca.api.models;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.AssertTrue;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Positive;
 
 @Document(collection = "turmas")
 public class Turma {
@@ -13,10 +23,24 @@ public class Turma {
 
     private String cursoId;
     private String instrutorId;
-    private String inicio;
-    private String fim;
+
+    @NotNull(message = "A data inicial é obrigatória.")
+    private LocalDate inicio;
+
+    @NotNull(message = "A data final é obrigatória.")
+    private LocalDate fim;
+
+    @NotNull(message = "O número de vagas é obrigatório.")
+    @Positive(message = "O número de vagas deve ser maior que zero.")
     private Integer vagas;
 
+    @NotBlank(message = "O status é obrigatório.")
+    @Pattern(
+            regexp = "PREVISTA|ATIVA|ENCERRADA|CANCELADA",
+            message = "O status deve ser PREVISTA, ATIVA, ENCERRADA ou CANCELADA.")
+    private String status;
+
+    @Valid
     private List<Horario> horarios;
 
     public Turma() {
@@ -26,8 +50,8 @@ public class Turma {
             String id,
             String cursoId,
             String instrutorId,
-            String inicio,
-            String fim,
+            LocalDate inicio,
+            LocalDate fim,
             Integer vagas,
             List<Horario> horarios) {
         this.id = id;
@@ -37,6 +61,17 @@ public class Turma {
         this.fim = fim;
         this.vagas = vagas;
         this.horarios = horarios;
+    }
+
+    // Validação que compara dois atributos: a data final
+    // não pode ser anterior à data inicial
+    @JsonIgnore
+    @AssertTrue(message = "A data final não pode ser anterior à data inicial.")
+    public boolean isPeriodoValido() {
+        if (inicio == null || fim == null) {
+            return true;
+        }
+        return !fim.isBefore(inicio);
     }
 
     public String getId() {
@@ -63,19 +98,19 @@ public class Turma {
         this.instrutorId = instrutorId;
     }
 
-    public String getInicio() {
+    public LocalDate getInicio() {
         return inicio;
     }
 
-    public void setInicio(String inicio) {
+    public void setInicio(LocalDate inicio) {
         this.inicio = inicio;
     }
 
-    public String getFim() {
+    public LocalDate getFim() {
         return fim;
     }
 
-    public void setFim(String fim) {
+    public void setFim(LocalDate fim) {
         this.fim = fim;
     }
 
@@ -87,6 +122,14 @@ public class Turma {
         this.vagas = vagas;
     }
 
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
     public List<Horario> getHorarios() {
         return horarios;
     }
@@ -94,6 +137,4 @@ public class Turma {
     public void setHorarios(List<Horario> horarios) {
         this.horarios = horarios;
     }
-
-    
 }

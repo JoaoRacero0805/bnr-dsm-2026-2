@@ -5,6 +5,10 @@ import java.util.List;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+
 @Document(collection = "matriculas")
 public class Matricula {
 
@@ -13,9 +17,16 @@ public class Matricula {
 
     private String alunoId;
     private String turmaId;
+
+    @NotBlank(message = "A data da matrícula é obrigatória.")
+    @Pattern(regexp = "\\d{4}-\\d{2}-\\d{2}", message = "A data deve estar no formato AAAA-MM-DD.")
     private String data;
+
+    @NotBlank(message = "A situação da matrícula é obrigatória.")
+    @Pattern(regexp = "ativa|concluída|cancelada", message = "A situação deve ser ativa, concluída ou cancelada.")
     private String situacao;
 
+    @Valid
     private List<Nota> notas;
 
     public Matricula() {
@@ -83,6 +94,4 @@ public class Matricula {
     public void setNotas(List<Nota> notas) {
         this.notas = notas;
     }
-
-    
 }

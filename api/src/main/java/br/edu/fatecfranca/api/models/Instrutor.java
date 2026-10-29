@@ -5,18 +5,33 @@ import java.util.List;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import org.hibernate.validator.constraints.br.CPF;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+
 @Document(collection = "instrutores")
 public class Instrutor {
 
     @Id
     private String id;
 
+    @NotBlank(message = "O nome é obrigatório.")
     private String nome;
+
+    @NotBlank(message = "O CPF é obrigatório.")
+    @CPF(message = "O CPF informado é inválido.")
     private String cpf;
+
     private String telefone;
+
+    @NotBlank(message = "O e-mail é obrigatório.")
+    @Email(message = "O e-mail informado é inválido.")
     private String email;
 
     private List<String> especialidades;
+
+    @Valid
     private List<Endereco> enderecos;
 
     public Instrutor() {
@@ -94,6 +109,4 @@ public class Instrutor {
     public void setEnderecos(List<Endereco> enderecos) {
         this.enderecos = enderecos;
     }
-
-    
 }

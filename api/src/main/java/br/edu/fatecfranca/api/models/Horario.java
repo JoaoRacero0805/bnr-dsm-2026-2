@@ -1,9 +1,19 @@
 package br.edu.fatecfranca.api.models;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+
 public class Horario {
 
+    @NotBlank(message = "O dia da semana é obrigatório.")
     private String diaSemana;
+
+    @NotBlank(message = "O horário de início é obrigatório.")
+    @Pattern(regexp = "([01]\\d|2[0-3]):[0-5]\\d", message = "O horário de início deve estar no formato HH:mm.")
     private String inicio;
+
+    @NotBlank(message = "O horário de término é obrigatório.")
+    @Pattern(regexp = "([01]\\d|2[0-3]):[0-5]\\d", message = "O horário de término deve estar no formato HH:mm.")
     private String fim;
 
     public Horario() {
@@ -38,6 +48,4 @@ public class Horario {
     public void setFim(String fim) {
         this.fim = fim;
     }
-
-    
 }
